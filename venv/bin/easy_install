@@ -1,4 +1,4 @@
-#!/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/venv/bin/python
+#!/home/gordon/work/project_models/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
