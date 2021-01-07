@@ -75,7 +75,7 @@ class MovingAverage2(object):
 
 if __name__ == '__main__':
     x = MovingAverage2()
-    # name = 'AAPL'
-    # period = '3mo'
-    # x.setup(name, period)
-    # x.level()
+    name = '^GSPC'
+    period = '3mo'
+    x.setup(name, period)
+    x.level()

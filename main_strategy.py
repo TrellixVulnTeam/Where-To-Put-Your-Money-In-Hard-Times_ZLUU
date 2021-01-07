@@ -14,7 +14,7 @@ from models.strategy3 import Strategy3
 from models.univariate_TS_regression import Univariate_TS_Reg
 from models.multivariate_TS import Multivariate_TS
 from models.viz_model_predict_SARIMAX import Model
-from models.prophet import Prophet
+# from models.prophet import Prophet
 
 import pandas as pd
 import numpy as np
@@ -55,59 +55,61 @@ if __name__ == '__main__':
     # run.getData_I_tics()
     
 # movingAverage.py ~ MOVING_AVERAGES:
-    mavg = MovingAverage1()
-    p = str(path) + '/data/raw/'
-    ticker = '^GSPC'
-    mavg.plot_mAvg(ticker, p)
-    mavg.gainers()
-    mavg.losers()
+    # mavg = MovingAverage1()
+    # p = str(path) + '/data/raw/'
+    # ticker = '^GSPC'
+    # mavg.plot_mAvg(ticker, p)
+    # mavg.gainers()
+    # mavg.losers()
 
-    x = MovingAverage2()
-    name = '^GSPC'
-    period = '3mo'
-    x.setup(name, period)
-    x.level()
+    # x = MovingAverage2()
+    # name = '^GSPC'
+    # period = '3mo'
+    # x.setup(name, period)
+    # x.level()
 
     x = MovingAverage3()
+    stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 2, 20, 'SMA', '1y')
     stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 20, 50, 'SMA', '1y')
+    stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 2, 20, 'EMA', '1y')
     stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 20, 50, 'EMA', '1y')
     plt.show()
     
 # EFFICIENT-FRONTIER:
-    N_PORTFOLIOS = 10 ** 5
-    N_DAYS = 252
-    RISKY_ASSETS = ['^GSPC', 'TSLA', 'AAPL', 'AMZN', 'NFLX']
-    RISKY_ASSETS.sort()
-    START_DATE = '2019-01-01'
-    END_DATE = '2020-12-24'
-    n_assets = len(RISKY_ASSETS)
-    ef = Efficient_Frontier(N_PORTFOLIOS, N_DAYS, RISKY_ASSETS, START_DATE, END_DATE, n_assets)
-    ef.final_plot()
+    # N_PORTFOLIOS = 10 ** 5
+    # N_DAYS = 252
+    # RISKY_ASSETS = ['^GSPC', 'TSLA', 'AAPL', 'AMZN', 'NFLX']
+    # RISKY_ASSETS.sort()
+    # START_DATE = '2019-01-01'
+    # END_DATE = '2020-12-24'
+    # n_assets = len(RISKY_ASSETS)
+    # ef = Efficient_Frontier(N_PORTFOLIOS, N_DAYS, RISKY_ASSETS, START_DATE, END_DATE, n_assets)
+    # ef.final_plot()
 
 # PORTFOLIO OPTIMIZERS:
-    saveName = 'sample_data' 'sp500' 'dow' 'nasdaq' 'sample' 'broker_pos_data' 'roth_pos_data', 'moveOn_pos_data', 'potential_pos_data'
-    saveName = 'dow'
-    p = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/"
-    path = p + 'raw/' + saveName + '_10y_1d.pkl'
-    PT_data = pd.read_pickle(path)
-    PT = pd.DataFrame(PT_data)
-    tickers, returns = list(PT.columns), PT.pct_change()
-    mean_returns, cov_matrix, num_portfolios, risk_free_rate = returns.mean(), returns.cov(), 25000, 0.0178
-    destination = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/processed/" 
+    # saveName = 'sample_data' 'sp500' 'dow' 'nasdaq' 'sample' 'broker_pos_data' 'roth_pos_data', 'moveOn_pos_data', 'potential_pos_data'
+    # saveName = 'potential_pos_data'
+    # p = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/"
+    # path = p + 'raw/' + saveName + '_10y_1d.pkl'
+    # PT_data = pd.read_pickle(path)
+    # PT = pd.DataFrame(PT_data)
+    # tickers, returns = list(PT.columns), PT.pct_change()
+    # mean_returns, cov_matrix, num_portfolios, risk_free_rate = returns.mean(), returns.cov(), 25000, 0.0178
+    # destination = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/processed/" 
 
-    rp, sdp, rp_min, sdp_min = optimizer.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
-    x = Look_At_Optimized_Portfolios(saveName) #####
-    df, fd, a, b = x.viz()
-    print(f'\nMaximum Sharpe Ratio Portfolio: \n   Annualized Return = {round(rp,2)}%\n   Annualized Volatility = {round(sdp,2)}%\n\n {df.iloc[a]}')
-    print(f'\n\nMinimum Volatility Portfolio \n   Annualized Return = {round(rp_min,2)}%\n   Annualized Volatility = {round(sdp_min,2)}%\n\n {fd.iloc[b]}')
+    # rp, sdp, rp_min, sdp_min = optimizer.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
+    # x = Look_At_Optimized_Portfolios(saveName) #####
+    # df, fd, a, b = x.viz()
+    # print(f'\nMaximum Sharpe Ratio Portfolio: \n   Annualized Return = {round(rp,2)}%\n   Annualized Volatility = {round(sdp,2)}%\n\n {df.iloc[a]}')
+    # print(f'\n\nMinimum Volatility Portfolio \n   Annualized Return = {round(rp_min,2)}%\n   Annualized Volatility = {round(sdp_min,2)}%\n\n {fd.iloc[b]}')
  
-    optimizer2.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
+    # optimizer2.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
 
 # STRATEGIES:
-    tic = ['^GSPC', 'SPY']
-    run = Strategy1(tic)
-    run.model()
+    # tic = ['^GSPC', 'SPY']
+    # run = Strategy1(tic)
+    # run.model()
 
-    symbol, tic = 'SP500', '^GSPC'
-    run = Strategy3(symbol, tic)
-    run.model3()
+    # symbol, tic = 'SP500', '^GSPC'
+    # run = Strategy3(symbol, tic)
+    # run.model3()
