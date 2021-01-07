@@ -1,5 +1,5 @@
-from pandas.io.pickle import read_pickle
 from src.data.make_dataset import Get_Historical_Data
+from models.arima import Arima_Model
 from models.movingAverage1 import MovingAverage1
 from models.movingAverage2 import MovingAverage2
 from models.movingAverage3 import MovingAverage3
@@ -8,15 +8,24 @@ from models.lstm_rnn import LSTM_RNN
 from models import optimizer
 from models.optimizer import Look_At_Optimized_Portfolios
 from models import optimizer2
+from models.sckitLearn_stockAnalysis import SckitLearn_Stock_Analysis
+from models.strategy import Strategy1
+from models.strategy3 import Strategy3
+from models.univariate_TS_regression import Univariate_TS_Reg
+from models.multivariate_TS import Multivariate_TS
 from models.viz_model_predict_SARIMAX import Model
+from models.prophet import Prophet
 
 import pandas as pd
 import numpy as np
+from pandas.io.pickle import read_pickle
 import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set_palette('cubehelix')
+# sns.set_palette('cubehelix')
 # sns.set(style='darkgrid', context='talk', palette='Dark2')
-plt.style.use('seaborn') # plt.style.use('seaborn-colorblind') #alternative
+# plt.style.use('seaborn-colorblind')
+plt.style.use('seaborn') 
+sns.set_style('whitegrid')
 sm, med, lg = 10, 15, 25
 plt.rc('font', size = sm)         # controls default text sizes
 plt.rc('axes', titlesize = med)   # fontsize of the axes title
@@ -80,13 +89,37 @@ if __name__ == '__main__':
     # period='10y'
     # interval='1d'
     # lstm_rnn = LSTM_RNN(ticker, path, period, interval)
-    # lstm_rnn.viz(epochs = 5, batch_size = 13, loss = 'mean_squared_error')  
+    # lstm_rnn.viz(epochs = 5, batch_size = 13, loss = 'mean_squared_error')
 
-# VIZ_MODEL_PREDICTT_SP500-INDEX:
+# ARIMA MODEL:
+    # ticker = '^GSPC'
+    # run = Arima_Model(ticker)
+    # run.model_arima()
+
+# VIZ_MODEL_PREDICTT_SP500-INDEX (PCA, SEASONAL-DECOMPOSITION, SARIMAX):
     # p = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/'
     # stock=read_pickle(p + 'tickers/sp500_ticker_list.pkl')
     # x = Model(stock)
     # x.predict()
+
+# PROPHET MODEL:
+    # ticker = '^GSPC'
+    # run = Prophet(ticker)
+    # run.model_prophet()
+
+# UNIVARIATE TIME SERIES - REGRESSION:
+    # ticker = '^GSPC'
+    # run = Univariate_TS_Reg(ticker)
+    # run.runs()
+
+# MULTIVARIATE TIME SERIES:
+    # run = Multivariate_TS()
+    # run.multivariate()
+
+# SCKITLEARN-ANALYSIS & PREDICT (Lin Regression, Quadratic Regression 2&3, KNN Regression)
+    # ticker = '^GSPC'
+    # run = SckitLearn_Stock_Analysis(ticker)
+    # run.model_out()    
 
 # PORTFOLIO OPTIMIZERS:
     # saveName = 'sample_data' 'sp500' 'dow' 'nasdaq' 'sample' 'broker_pos_data' 'roth_pos_data', 'moveOn_pos_data', 'potential_pos_data'
@@ -108,7 +141,10 @@ if __name__ == '__main__':
     # optimizer2.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
 
 # STRATEGIES:
-    # from models.strategy import Strategy1
-    # from models.strategy3 import Strategy3
-    # Strategy1()
-    # Strategy3() 
+    # tic = ['^GSPC', 'SPY']
+    # run = Strategy1(tic)
+    # run.model()
+
+    # symbol, tic = 'SP500', '^GSPC'
+    # run = Strategy3(symbol, tic)
+    # run.model3()
