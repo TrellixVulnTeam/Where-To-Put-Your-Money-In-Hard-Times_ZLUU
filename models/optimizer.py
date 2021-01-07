@@ -2,11 +2,9 @@ import scipy.optimize as sco
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-plt.style.use('fivethirtyeight')
 np.random.seed(777)
 from datetime import *
-start = datetime(2020, 6, 1)
-end = datetime.now()
+from pandas.io.pickle import read_pickle
 
 def portfolio_annualised_performance(weights, mean_returns, cov_matrix):
     returns = np.sum(mean_returns*weights ) *252
@@ -107,7 +105,6 @@ def efficient_return(mean_returns, cov_matrix, target):
                           args=args, method='SLSQP', bounds=bounds, constraints=constraints)
     return result
 
-
 def efficient_frontier(mean_returns, cov_matrix, returns_range):
     efficients = []
     for ret in returns_range:
@@ -157,85 +154,105 @@ def display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, 
     plt.ylabel('annualised returns')
     plt.legend(labelspacing=0.8)
     
-def display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate):
+def display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate, destination, saveName):
     max_sharpe = max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate)
-    sdp, rp = portfolio_annualised_performance(max_sharpe['x'],
-                                               mean_returns, cov_matrix)
-    max_sharpe_allocation = pd.DataFrame(max_sharpe.x,index=PT.columns,
-                                         columns=['allocation'])
+    sdp, rp = portfolio_annualised_performance(max_sharpe['x'],mean_returns, cov_matrix)
+    max_sharpe_allocation = pd.DataFrame(max_sharpe.x,index=PT.columns,columns=['allocation'])
     max_sharpe_allocation.allocation = [round(i*100,2)for i in max_sharpe_allocation.allocation]
     max_sharpe_allocation = max_sharpe_allocation.T
-    max_sharpe_allocation
+    max_sharpe_allocation.to_pickle(destination + saveName + "max_sharpeRatio_allocation.pkl")
     min_vol = min_variance(mean_returns, cov_matrix)
     sdp_min, rp_min = portfolio_annualised_performance(min_vol['x'], mean_returns, cov_matrix)
     min_vol_allocation = pd.DataFrame(min_vol.x,index=PT.columns,columns=['allocation'])
     min_vol_allocation.allocation = [round(i*100,2)for i in min_vol_allocation.allocation]
-    min_vol_allocation = min_vol_allocation.T    
+    min_vol_allocation = min_vol_allocation.T
+    min_vol_allocation.to_pickle(destination + saveName + "min_volatility_allocation.pkl")
     an_vol = np.std(returns) * np.sqrt(252)
     an_rt = mean_returns * 252
     print ("-"*80)
-    print ("Maximum Sharpe Ratio Portfolio Allocation\n")
-    print ("Annualised Return:", round(rp,2))
-    print ("Annualised Volatility:", round(sdp,2))
-    print ("\n")
-    print (max_sharpe_allocation)
-    print ("-"*80)
-    print ("Minimum Volatility Portfolio Allocation\n")
-    print ("Annualised Return:", round(rp_min,2))
-    print ("Annualised Volatility:", round(sdp_min,2))
-    print ("\n")
-    print (min_vol_allocation)
-    print ("-"*80)
+    # print ("Maximum Sharpe Ratio Portfolio Allocation\n")
+    # print ("Annualised Return:", round(rp,2))
+    # print ("Annualised Volatility:", round(sdp,2))
+    # print ("\n")
+    # print (max_sharpe_allocation)
+    # print ("-"*80)
+    # print ("Minimum Volatility Portfolio Allocation\n")
+    # print ("Annualised Return:", round(rp_min,2))
+    # print ("Annualised Volatility:", round(sdp_min,2))
+    # print ("\n")
+    # print (min_vol_allocation)
+    # print ("-"*80)
     print ("Individual Stock Returns and Volatility\n")
     for i, txt in enumerate(PT.columns):
         print (txt,":","annuaised return",round(an_rt[i],2),
                ", annualised volatility:",round(an_vol[i],2))
     print ("-"*80)
+    return rp, sdp, rp_min, sdp_min
     
-    fig, ax = plt.subplots(figsize=(10, 7))
-    ax.scatter(an_vol,an_rt,marker='o',s=200)
+    # fig, ax = plt.subplots(figsize=(10, 7))
+    # ax.scatter(an_vol,an_rt,marker='o',s=200)
+    # for i, txt in enumerate(PT.columns):
+    #     ax.annotate(txt, (an_vol[i],an_rt[i]), 
+    #                 xytext=(10,0), textcoords='offset points')
+    # ax.scatter(sdp,rp,marker='*',color='r',s=500,
+    #            label='Maximum Sharpe ratio')
+    # ax.scatter(sdp_min,rp_min,marker='*',
+    #            color='g',s=500, label='Minimum volatility')
+    # target = np.linspace(rp_min, 0.34, 50)
+    # efficient_portfolios = efficient_frontier(mean_returns, cov_matrix, target)
+    # ax.plot([p['fun'] for p in efficient_portfolios], target, linestyle='-.',
+    #         color='black', label='efficient frontier')
+    # ax.set_title('Portfolio Optimization with Individual Stocks')
+    # ax.set_xlabel('annualised volatility')
+    # ax.set_ylabel('annualised returns')
+    # ax.legend(labelspacing=0.8)
+    # plt.show()
 
-    for i, txt in enumerate(PT.columns):
-        ax.annotate(txt, (an_vol[i],an_rt[i]), 
-                    xytext=(10,0), textcoords='offset points')
-    ax.scatter(sdp,rp,marker='*',color='r',s=500,
-               label='Maximum Sharpe ratio')
-    ax.scatter(sdp_min,rp_min,marker='*',
-               color='g',s=500, label='Minimum volatility')
+class Look_At_Optimized_Portfolios(object):
+    def __init__(self, key):
+        path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/processed/'
+        self.path1 = (path + key + '_max_sharpeRatio_allocation.pkl')
+        self.path2 = (path + key + '_min_volatility_allocation.pkl')
 
-    target = np.linspace(rp_min, 0.34, 50)
-    efficient_portfolios = efficient_frontier(mean_returns, cov_matrix, target)
-    ax.plot([p['fun'] for p in efficient_portfolios], target, linestyle='-.',
-            color='black', label='efficient frontier')
-    ax.set_title('Portfolio Optimization with Individual Stocks')
-    ax.set_xlabel('annualised volatility')
-    ax.set_ylabel('annualised returns')
-    ax.legend(labelspacing=0.8)
-    plt.show()
+    def viz(self):
+        df = read_pickle(self.path1)
+        fd = read_pickle(self.path2)
+        a = np.where(df.T['allocation'] > 0.0)
+        b = np.where(fd.T['allocation'] > 0.0)
+        return df.T, fd.T, a, b
 
 if __name__ == '__main__':
-    start_date = start
-    end_date = end
+    # saveName = 'sample_data' 'sp500' 'dow' 'nasdaq' 'sample'
+    # saveName = 'broker_pos_data' 'roth_pos_data', 'moveOn_pos_data', 'potential_pos_data'
+    saveName = 'roth_pos_data'
+    
+    start, end = datetime(2020, 6, 1), datetime.now()
+    start_date, end_date = start, end
     p = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/"
-    path = p + 'raw/sp500_10y_1d.pkl'
+    path = p + 'raw/' + saveName + '_10y_1d.pkl'
     PT_data = pd.read_pickle(path)
     PT = pd.DataFrame(PT_data)
     tickers = list(PT.columns)
-
+    
     returns = PT.pct_change()
     mean_returns = returns.mean()
     cov_matrix = returns.cov()
     num_portfolios = 25000
     risk_free_rate = 0.0178
-    # Plot all the close prices
-    PT.plot(figsize=(10,7))
-    plt.legend()
-    plt.title("Adjusted Close Price", fontsize=16)
-    plt.xlabel('Year', fontsize=14)
-    plt.grid(which="major", color='k', linestyle='-.', linewidth=0.5)
-    print(PT.head())
-    plt.show();
+    destination = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/processed/"
+    rp, sdp, rp_min, sdp_min = display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate, destination, saveName)
 
     # display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate)
     # display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate)
-    display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate)  
+
+    x = Look_At_Optimized_Portfolios(saveName)
+    df, fd, a, b = x.viz()
+    rp_min, sdp_min
+    print('\nMaximum Sharpe Ratio Portfolio:')
+    print(f'   Annualized Return = {round(rp,2)}%')
+    print(f'   Annualized Volatility = {round(sdp,2)}%\n')
+    print(df.iloc[a])
+    print('\n\nMinimum Volatility Portfolio')
+    print(f'   Annualized Return = {round(rp_min,2)}%')
+    print(f'   Annualized Volatility = {round(sdp_min,2)}%\n')
+    print(fd.iloc[b])

@@ -1,6 +1,7 @@
-# from models.script.make_dataset1 import Stock_Info
+# from src.data.make_dataset import Get_Historical_Data
 import numpy as np
 import pandas as pd
+from pandas.io.pickle import read_pickle
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense
@@ -10,6 +11,7 @@ import warnings
 warnings.filterwarnings('ignore')
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pickle
 plt.style.use('seaborn')
 sns.set_palette('cubehelix')
 # plt.style.use('seaborn-colorblind') #alternative
@@ -17,15 +19,14 @@ plt.rcParams['figure.figsize'] = [8, 4.5]
 plt.rcParams['figure.dpi'] = 300
 
 class LSTM_RNN(object):
-    def __init__(self, ticker, period='5y', interval='1d'):
+    def __init__(self, ticker, path, period='5y', interval='1d'):
         self.ticker = ticker
+        self.path = path
         self.period = period
         self.interval = interval
 
     def getData(self):
-        self.priceHistory = Stock_Info()
-        self.data = self.priceHistory.get_ts(
-            ticker=self.ticker, period=self.period, interval=self.interval)
+        self.data = read_pickle(path)
         self.train = self.data.iloc[:int(len(self.data)*.7)]
         self.test = self.data.iloc[int(len(self.data)*.3):]            
 
@@ -95,6 +96,7 @@ class LSTM_RNN(object):
         plt.show()
 
 if __name__ == "__main__":
-    ticker = 'TSLA'
-    # lstm_rnn = LSTM_RNN(ticker)
-    # lstm_rnn.viz(epochs = 10, batch_size = 32, loss = 'mean_squared_error')
+    ticker = '^GSPC'
+    path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/^GSPC_data_10y_1d.pkl'
+    lstm_rnn = LSTM_RNN(ticker, path)
+    lstm_rnn.viz(epochs = 10, batch_size = 32, loss = 'mean_squared_error')

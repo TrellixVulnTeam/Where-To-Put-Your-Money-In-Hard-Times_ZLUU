@@ -3,6 +3,7 @@ import pickle
 # from models.script.make_dataset1 import Stock_Info
 import pandas as pd
 import numpy as np
+from pandas.io.pickle import read_pickle
 from yahoo_fin.stock_info import *
 import warnings
 warnings.filterwarnings('ignore')
@@ -30,13 +31,13 @@ class MovingAverage1(object):
         self.period, self.interval = period, interval
 
     def getData(self):
-            open_file = open(self.q, "rb")
-            loaded_list = pickle.load(open_file)
-            open_file.close()
-            return loaded_list
+        self.loaded_lst = read_pickle(self.path)
+        print(self.loaded_lst)
+        return self.loaded_lst
 
     def mAvg(self):
-        self.df = pd.DataFrame(self.getData())
+        original_df = self.getData()
+        self.df = pd.DataFrame(original_df['Close'])
         self.df_daily_pct_c = self.df.pct_change()
         self.df_daily_pct_c.fillna(0, inplace = True)
         self.df_daily_pct_c = self.df / self.df.shift(1) - 1
@@ -44,11 +45,11 @@ class MovingAverage1(object):
             # LOG Rate Of Return
         self.df_daily_log_returns = np.log(self.df.pct_change() + 1)
         self.df_daily_log_returns.fillna(0, inplace = True)
-        self.df['Daily_Log'] = self.df_daily_log_returns['Adj Close'] * 100
+        self.df['Daily_Log'] = self.df_daily_log_returns['Close'] * 100
             # Total Return
         self.df_cum_daily_return = (1 + self.df_daily_pct_c).cumprod() 
         self.df['Total_RoR'] = self.df_cum_daily_return
-        self.df.rename(columns={'Adj Close': self.ticker}, inplace=True)
+        self.df.rename(columns={'Close': self.ticker}, inplace=True)
             # Build MovingAverages
         self.short_window, self.long_window, self.period, self.multiplier = 5, 22, 20, 2
         self.signals = pd.DataFrame(index=self.df.index)
@@ -61,9 +62,9 @@ class MovingAverage1(object):
         self.signals['UpperBand'] = self.df[self.ticker].rolling(self.period).mean() + self.df[self.ticker].rolling(self.period).std() * self.multiplier
         self.signals['LowerBand'] = self.df[self.ticker].rolling(self.period).mean() - self.df[self.ticker].rolling(self.period).std() * self.multiplier
 
-    def plot_mAvg(self, ticker, q):
+    def plot_mAvg(self, ticker, path):
         self.ticker = ticker
-        self.q = q
+        self.path = path
         self.mAvg()
         fig, ax1 = plt.subplots()
         self.df[self.ticker].plot(ax=ax1, lw=2, color = 'k')
@@ -93,6 +94,8 @@ class MovingAverage1(object):
 
 if __name__ == "__main__":
     mavg = MovingAverage1()
-    # mavg.plot_mAvg(ticker = 'AAPL')
-    # mavg.gainers()
-    # mavg.losers()
+    ticker = '^GSPC'
+    path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/^GSPC_data_10y_1d.pkl'
+    mavg.plot_mAvg(ticker, path)
+    mavg.gainers()
+    mavg.losers()

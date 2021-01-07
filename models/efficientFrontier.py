@@ -137,5 +137,5 @@ if __name__ == "__main__":
     END_DATE = '2020-12-24'
     n_assets = len(RISKY_ASSETS)
 
-    # ef = Efficient_Frontier(N_PORTFOLIOS, N_DAYS, RISKY_ASSETS, START_DATE, END_DATE, n_assets)
-    # ef.final_plot()
+    ef = Efficient_Frontier(N_PORTFOLIOS, N_DAYS, RISKY_ASSETS, START_DATE, END_DATE, n_assets)
+    ef.final_plot()

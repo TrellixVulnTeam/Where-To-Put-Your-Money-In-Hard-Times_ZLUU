@@ -1,11 +1,14 @@
 import pandas as pd
 import numpy as np
 import yfinance
-from mpl_finance import candlestick_ohlc
+# from mpl_finance import candlestick_ohlc
+from mplfinance.original_flavor import candlestick_ohlc
 import matplotlib.dates as mpl_dates
 import matplotlib.pyplot as plt
-plt.rcParams['figure.figsize'] = [12, 7]
+plt.rcParams['figure.figsize'] = [15, 6]
 plt.rc('font', size=14)
+import warnings
+warnings.filterwarnings('ignore')
 
 class MovingAverage2(object):
     def __init__(self):
@@ -37,11 +40,14 @@ class MovingAverage2(object):
         date_format = mpl_dates.DateFormatter('%d %b %Y')
         ax.xaxis.set_major_formatter(date_format)
         fig.autofmt_xdate()
-        fig.tight_layout()
+        # fig.tight_layout()
         for level in self.levels:
             plt.hlines(level[1],xmin=self.df['Date'][level[0]], xmax=max(self.df['Date']),colors='blue')
+            plt.title(self.name + ' Support & Resistance Price Levels')
+            plt.tight_layout()
+            plt.grid(True, linestyle='--')
         fig.show()
-
+        
     def isFarFromLevel(self,l):
         return np.sum([abs(l-x) < self.s  for x in self.levels]) == 0
 
@@ -68,7 +74,9 @@ class MovingAverage2(object):
         plt.show()
 
 if __name__ == '__main__':
-    # name = 'AAPL'
-    # period = '3mo'
+    name = 'AAPL'
+    period = '3mo'
     x = MovingAverage2()
-    # built = x.setup(name, period)
+    x.setup(name, period)
+    x.level()
+    

@@ -12,13 +12,14 @@ class MovingAverage3(object):
     def __init__(self):
         pass
 
-    def MovingAverageCrossStrategy(self,
-        stock_symbol = 'aapl', 
-        short_window = 2, 
-        long_window = 20, 
-        period = '6mo',
-        moving_avg = 'SMA', 
-        display_table = True):
+    def MovingAverageCrossStrategy(
+        self,stock_symbol = 'aapl',
+        short_window = 2,
+        long_window = 20,
+        moving_avg = 'SMA',
+        period = '1y',
+        display_table = True
+        ):
         stock_df = yf.download(stock_symbol, period=period, interval='1d')['Adj Close']
         stock_df = pd.DataFrame(stock_df) # convert Series object to dataframe 
         stock_df.columns = {stock_symbol} # assign new colun name
@@ -26,22 +27,19 @@ class MovingAverage3(object):
         # column names for long and short moving average columns
         short_window_col = str(short_window) + '_' + moving_avg
         long_window_col = str(long_window) + '_' + moving_avg  
-    
         if moving_avg == 'SMA':
             stock_df[short_window_col] = stock_df[stock_symbol].rolling(window = short_window, min_periods = 1).mean()
             stock_df[long_window_col] = stock_df[stock_symbol].rolling(window = long_window, min_periods = 1).mean()
         elif moving_avg == 'EMA':
             stock_df[short_window_col] = stock_df[stock_symbol].ewm(span = short_window, adjust = False).mean()
             stock_df[long_window_col] = stock_df[stock_symbol].ewm(span = long_window, adjust = False).mean()
-
         # create a new column 'Signal' such that if faster moving average is greater than slower moving average set Signal as 1 else 0.
         stock_df['Signal'] = 0.0  
-        stock_df['Signal'] = np.where(stock_df[stock_symbol] > stock_df[long_window_col], 1.0, 0.0) 
+        stock_df['Signal'] = np.where(stock_df[short_window_col] > stock_df[long_window_col], 1.0, 0.0) 
         # create a new column 'Position' which is a day-to-day difference of the 'Signal' column. 
         stock_df['Position'] = stock_df['Signal'].diff()
-
         # plot close price, short-term and long-term moving averages
-        plt.figure(figsize = (20,7), dpi = 100)
+        plt.figure(figsize = (15,6), dpi = 100)
         plt.tick_params(axis = 'both', labelsize = 14)
         stock_df[stock_symbol].plot(color = 'k', lw = 3, label = stock_symbol)  
         stock_df[short_window_col].plot(color = 'b', lw = 2, label = short_window_col)
@@ -58,16 +56,16 @@ class MovingAverage3(object):
         plt.legend()
         plt.grid()
         plt.show()
-        
         if display_table == True:
             df_pos = stock_df[(stock_df['Position'] == 1) | (stock_df['Position'] == -1)]
             df_pos['Position'] = df_pos['Position'].apply(lambda x: 'Buy' if x == 1 else 'Sell')
             # print(tabulate(df_pos, headers = 'keys', tablefmt = 'psql'))
             self.res = tabulate(df_pos, headers = 'keys', tablefmt = 'psql')
-
         return (stock_df, self.res)
 
 if __name__ == '__main__':
     x = MovingAverage3()
-    stock_df, table = x.MovingAverageCrossStrategy('AAPL', 2, 20)
+    stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'SMA', '1y')
+    print(table)
+    stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'EMA', '1y')
     print(table)
