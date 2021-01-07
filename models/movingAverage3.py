@@ -13,7 +13,7 @@ class MovingAverage3(object):
         pass
 
     def MovingAverageCrossStrategy(
-        self,stock_symbol = 'aapl',
+        self,stock_symbol = '^GSPC',
         short_window = 2,
         long_window = 20,
         moving_avg = 'SMA',
@@ -60,10 +60,10 @@ class MovingAverage3(object):
             df_pos['Position'] = df_pos['Position'].apply(lambda x: 'Buy' if x == 1 else 'Sell')
             print(tabulate(df_pos, headers = 'keys', tablefmt = 'psql'))
             self.res = tabulate(df_pos, headers = 'keys', tablefmt = 'psql')
-        plt.show()
         return (stock_df, self.res)
 
 if __name__ == '__main__':
     x = MovingAverage3()
     # stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'SMA', '1y')
     # stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'EMA', '1y')
+    # plt.show()

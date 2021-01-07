@@ -13,12 +13,12 @@ from tensorflow.keras.layers import Dense, LSTM
 import tensorflow.keras.backend as K
 import matplotlib.pyplot as plt
 import seaborn as sns
-gpu_devices = tf.config.experimental.list_physical_devices('GPU')
-if gpu_devices:
-    print('Using GPU')
-    tf.config.experimental.set_memory_growth(gpu_devices[0], True)
-else:
-    print('Using CPU')
+# gpu_devices = tf.config.experimental.list_physical_devices('GPU')
+# if gpu_devices:
+#     print('Using GPU')
+#     tf.config.experimental.set_memory_growth(gpu_devices[0], True)
+# else:
+    # print('Using CPU')
 sns.set_style('whitegrid')
 np.random.seed(42)    
 results_path = Path('results', 'multivariate_time_series')
@@ -34,37 +34,24 @@ class Multivariate_TS(object):
         df = web.DataReader(self.tics, 'fred', '1980', '2021').dropna()
         df.columns = ['sentiment', 'ip']
         print(df.info)
-
         df_transformed = (pd.DataFrame(
             {'ip': np.log(df.ip).diff(12), 'sentiment': df.sentiment.diff(12)}).dropna())
         df_transformed = df_transformed.apply(minmax_scale)
-
-        fig, axes = plt.subplots(ncols=2, figsize=(14,4))
-        columns={'ip': 'Industrial Production', 'sentiment': 'Sentiment'}
-        df.rename(columns=columns).plot(ax=axes[0], title='Original Series')
-        df_transformed.rename(columns=columns).plot(ax=axes[1], title='Tansformed Series')
-        sns.despine()
-        fig.tight_layout()
-        plt.show()
-
         def create_multivariate_rnn_data(data, window_size):
             y = data[window_size:]
             n = data.shape[0]
             X = np.stack([data[i: j]
                         for i, j in enumerate(range(window_size, n))], axis=0)
             return X, y
-
         window_size = 18
         X, y = create_multivariate_rnn_data(df_transformed, window_size=window_size)
         print(X.shape, y.shape)
         print(df_transformed.head())
-
-        test_size = 48
+        test_size = 24
         train_size = X.shape[0]-test_size
         X_train, y_train = X[:train_size], y[:train_size]
         X_test, y_test = X[train_size:], y[train_size:]
         print(X_train.shape, X_test.shape)
-
         K.clear_session()
         n_features = output_size = 2
         lstm_units = 12
@@ -80,10 +67,8 @@ class Multivariate_TS(object):
             Dense(output_size, name='Output')]
             )
         print(rnn.summary())
-
         rnn.compile(loss='mae', optimizer='RMSProp')
         lstm_path = (results_path / 'lstm.h5').as_posix()
-
         checkpointer = ModelCheckpoint(
             filepath=lstm_path,
             verbose=1,
@@ -96,7 +81,6 @@ class Multivariate_TS(object):
             patience=10,
             restore_best_weights=True
             )
-
         result = rnn.fit(
             X_train,
             y_train,
@@ -107,9 +91,15 @@ class Multivariate_TS(object):
             callbacks=[early_stopping, checkpointer],
             verbose=1
             )
+        fig, axes = plt.subplots(ncols=3, figsize=(14,4))
+        columns={'ip': 'Industrial Production', 'sentiment': 'Sentiment'}
+        pd.DataFrame(result.history).plot(ax=axes[0], title='Loss vs Value Loss')
+        df.rename(columns=columns).plot(ax=axes[1], title='Original Series')
+        df_transformed.rename(columns=columns).plot(ax=axes[2], title='Tansformed Series')
+        
+        sns.despine()
+        fig.tight_layout()
 
-        pd.DataFrame(result.history).plot()
-        plt.show()
 
         y_pred = pd.DataFrame(
             rnn.predict(X_test), 
@@ -117,7 +107,6 @@ class Multivariate_TS(object):
             index=y_test.index
             )
         print(y_pred.info())
-
         test_mae = mean_absolute_error(y_pred, y_test)
         print(test_mae)
 
@@ -138,17 +127,16 @@ class Multivariate_TS(object):
             y_test[col].plot(ax=axes[i], label='out-of-sample')
             y_pred[col].plot(ax=axes[i], label='prediction')
             axes[i].set_xlabel('')
-        axes[1].set_ylim(.5, .9)
-        axes[1].fill_between(x=y_test.index, y1=0.5, y2=0.9, color='grey', alpha=.5)
-        axes[2].set_ylim(.3, .9)
-        axes[2].fill_between(x=y_test.index, y1=0.3, y2=0.9, color='grey', alpha=.5)
+        axes[1].set_ylim(.0, .9)
+        axes[1].fill_between(x=y_test.index, y1=0.0, y2=0.9, color='grey', alpha=.5)
+        axes[2].set_ylim(.0, .9)
+        axes[2].fill_between(x=y_test.index, y1=0.0, y2=0.9, color='grey', alpha=.5)
         plt.legend()
         fig.suptitle(
             'Multivariate RNN - Results | Test MAE = {:.4f}'.format(test_mae), fontsize=14)
         sns.despine()
         fig.tight_layout()
         fig.subplots_adjust(top=.85)
-        # fig.savefig(results_path / 'multivariate_results', dpi=300)
         plt.show()
 
 if __name__ == '__main__':

@@ -60,7 +60,7 @@ class Model:
         self.dataHull()
         self.fn_z_score = lambda x: (x - x.mean()) / x.std()
         self.df_z_components = self.daily_df_components.apply(self.fn_z_score)
-        self.df_z_components = -self.df_z_components.fillna(0)
+        self.df_z_components = self.df_z_components.fillna(0)
         self.fitted_pca = KernelPCA().fit(self.df_z_components)
         plt.rcParams['figure.figsize'] = (12,8)
         plt.plot(self.fitted_pca.lambdas_)

@@ -15,12 +15,12 @@ from tensorflow.keras.layers import Dense, LSTM
 from tensorflow import keras
 import matplotlib.pyplot as plt
 import seaborn as sns
-gpu_devices = tf.config.experimental.list_physical_devices('GPU')
-if gpu_devices:
-    print('Using GPU')
-    tf.config.experimental.set_memory_growth(gpu_devices[0], True)
-else:
-    print('Using CPU')
+# gpu_devices = tf.config.experimental.list_physical_devices('GPU')
+# if gpu_devices:
+#     print('Using GPU')
+#     tf.config.experimental.set_memory_growth(gpu_devices[0], True)
+# else:
+#     print('Using CPU')
 sns.set_style('whitegrid')
 np.random.seed(42)
 results_path = Path('results', 'univariate_time_series')
