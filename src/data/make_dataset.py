@@ -53,8 +53,9 @@ class Get_Historical_Data(object):
         print('\n     * * * All Ticker Lists Have Been Web-Scraped & Saved * * *\n')
 
 
-# if __name__ == '__main__':
-    # p = '~/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/'
-    # run = Get_Historical_Data(path=p, period='10y', interval='1d')
-    # run.getData_S(tic='AAPL')
+if __name__ == '__main__':
+    pass
+    # p = '~/work/Where-To-Put-Your-Money-In-Hard-Times/data/'
+    # run = Get_Historical_Data(path=p, period='1y', interval='1d')
+    # run.getData_S(tic='^GSPC')
     # run.getData_M(tics=['AAPL','AMZN','MSFT','TSLA','NFLX','^GSPC'], save_name='portfolio_data_')

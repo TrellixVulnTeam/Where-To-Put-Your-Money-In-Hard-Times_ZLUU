@@ -55,17 +55,15 @@ class MovingAverage3(object):
         plt.title(str(stock_symbol) + ' - ' + str(moving_avg) + ' Crossover', fontsize = 20)
         plt.legend()
         plt.grid()
-        plt.show()
         if display_table == True:
             df_pos = stock_df[(stock_df['Position'] == 1) | (stock_df['Position'] == -1)]
             df_pos['Position'] = df_pos['Position'].apply(lambda x: 'Buy' if x == 1 else 'Sell')
-            # print(tabulate(df_pos, headers = 'keys', tablefmt = 'psql'))
+            print(tabulate(df_pos, headers = 'keys', tablefmt = 'psql'))
             self.res = tabulate(df_pos, headers = 'keys', tablefmt = 'psql')
+        plt.show()
         return (stock_df, self.res)
 
 if __name__ == '__main__':
     x = MovingAverage3()
-    stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'SMA', '1y')
-    print(table)
-    stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'EMA', '1y')
-    print(table)
+    # stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'SMA', '1y')
+    # stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'EMA', '1y')

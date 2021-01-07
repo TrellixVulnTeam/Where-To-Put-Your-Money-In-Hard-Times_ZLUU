@@ -74,9 +74,8 @@ class MovingAverage2(object):
         plt.show()
 
 if __name__ == '__main__':
-    name = 'AAPL'
-    period = '3mo'
     x = MovingAverage2()
-    x.setup(name, period)
-    x.level()
-    
+    # name = 'AAPL'
+    # period = '3mo'
+    # x.setup(name, period)
+    # x.level()

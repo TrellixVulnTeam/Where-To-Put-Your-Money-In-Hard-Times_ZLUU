@@ -1,18 +1,21 @@
+from pandas.io.pickle import read_pickle
 from src.data.make_dataset import Get_Historical_Data
-from src.models.movingAverage1 import MovingAverage1
-# from src.models.movingAverage2 import MovingAverage2
-# from src.models.movingAverage3 import MovingAverage3
-# from src.models.movingAverage4 import MovingAverageCrossStrategy
-# from src.models.efficientFrontier import Efficient_Frontier
-# from src.models.lstm_rnn import LSTM_RNN
-# from src.models import optimizer
-# from src.models.sma_vectorized_backtest import SMAVectorBacktester
-# from src.models.viz_model_predict_SARIMAX import Model
+from models.movingAverage1 import MovingAverage1
+from models.movingAverage2 import MovingAverage2
+from models.movingAverage3 import MovingAverage3
+from models.efficientFrontier import Efficient_Frontier
+from models.lstm_rnn import LSTM_RNN
+from models import optimizer
+from models.optimizer import Look_At_Optimized_Portfolios
+from models import optimizer2
+from models.viz_model_predict_SARIMAX import Model
 
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_palette('cubehelix')
-sns.set(style='darkgrid', context='talk', palette='Dark2')
+# sns.set(style='darkgrid', context='talk', palette='Dark2')
 plt.style.use('seaborn') # plt.style.use('seaborn-colorblind') #alternative
 sm, med, lg = 10, 15, 25
 plt.rc('font', size = sm)         # controls default text sizes
@@ -44,26 +47,21 @@ if __name__ == '__main__':
     
 # movingAverage.py ~ MOVING_AVERAGES:
     # mavg = MovingAverage1()
-    # mavg.plot_mAvg('^GSPC', '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/^GSPC_data_10y_1d.pkl')
-    # mavg.plot_mAvg(tic)
+    # p = str(path) + '/data/raw/'
+    # ticker = '^GSPC'
+    # mavg.plot_mAvg(ticker, p)
+    # mavg.gainers()
+    # mavg.losers()
 
     # x = MovingAverage2()
-    # period = '3mo'
-    # x.setup(tic, period)
+    # name = 'AAPL'
+    # period = '3mo's
+    # x.setup(name, period)
     # x.level()
 
-    # y = MovingAverage3()
-    # stock_df, table = y.MovingAverageCrossStrategy(tic, 2, 20)
-    # print(table)  
-
-    # z = MovingAverageCrossStrategy(
-    #     stock_symbol = 'TSLA', 
-    #     start_date = '2020-01-01', 
-    #     short_window = 20, 
-    #     long_window = 50, 
-    #     moving_avg = 'SMA', 
-    #     display_table = True   
-    # )    
+    # x = MovingAverage3()
+    # stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'SMA', '1y')
+    # stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'EMA', '1y') 
     
 # EFFICIENT-FRONTIER:
     # N_PORTFOLIOS = 10 ** 5
@@ -77,23 +75,40 @@ if __name__ == '__main__':
     # ef.final_plot()
 
 # LSTM_RNN:
-    # lstm_rnn = LSTM_RNN('TSLA', period='5y', interval='1d')
-    # lstm_rnn.viz(epochs = 50, batch_size = 13, loss = 'mean_squared_error')  
+    # path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/'
+    # ticker = '^GSPC'
+    # period='10y'
+    # interval='1d'
+    # lstm_rnn = LSTM_RNN(ticker, path, period, interval)
+    # lstm_rnn.viz(epochs = 5, batch_size = 13, loss = 'mean_squared_error')  
 
 # VIZ_MODEL_PREDICTT_SP500-INDEX:
-    # p = '/home/gordon/work/assemble/data/raw/'
-    # df = pd.read_csv(p + 'stock_history/spComponentData.csv', index_col='Date')
-    # stock = list(df.columns)
+    # p = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/'
+    # stock=read_pickle(p + 'tickers/sp500_ticker_list.pkl')
     # x = Model(stock)
-    # x.dataHull()
-    # x.Kernel_pca()
-    # x.adf()
-    # x.seasonal_decomp()
-    # lowest_aic, order, seasonal_order = x.arima_grid_search(12)
-    # print('ARIMA{}x{}'.format(order, seasonal_order))
-    # print('Lowest AIC: ' , lowest_aic)
-    # mod_res = x.fitModel_to_SARIMAX()
-    # print(mod_res.summary()) 
-    # mod_res.plot_diagnostics(figsize=(12, 8))
-    # plt.show()
-    # x.predict()    
+    # x.predict()
+
+# PORTFOLIO OPTIMIZERS:
+    # saveName = 'sample_data' 'sp500' 'dow' 'nasdaq' 'sample' 'broker_pos_data' 'roth_pos_data', 'moveOn_pos_data', 'potential_pos_data'
+    # saveName = 'sp500'
+    # p = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/"
+    # path = p + 'raw/' + saveName + '_10y_1d.pkl'
+    # PT_data = pd.read_pickle(path)
+    # PT = pd.DataFrame(PT_data)
+    # tickers, returns = list(PT.columns), PT.pct_change()
+    # mean_returns, cov_matrix, num_portfolios, risk_free_rate = returns.mean(), returns.cov(), 25000, 0.0178
+    # destination = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/processed/" 
+
+    # rp, sdp, rp_min, sdp_min = optimizer.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
+    # x = Look_At_Optimized_Portfolios(saveName) #####
+    # df, fd, a, b = x.viz()
+    # print(f'\nMaximum Sharpe Ratio Portfolio: \n   Annualized Return = {round(rp,2)}%\n   Annualized Volatility = {round(sdp,2)}%\n\n {df.iloc[a]}')
+    # print(f'\n\nMinimum Volatility Portfolio \n   Annualized Return = {round(rp_min,2)}%\n   Annualized Volatility = {round(sdp_min,2)}%\n\n {fd.iloc[b]}')
+ 
+    # optimizer2.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
+
+# STRATEGIES:
+    # from models.strategy import Strategy1
+    # from models.strategy3 import Strategy3
+    # Strategy1()
+    # Strategy3() 

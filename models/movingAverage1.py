@@ -1,13 +1,11 @@
 p = '/home/gordon/work/assemble/data/raw/'
 import pickle
-# from models.script.make_dataset1 import Stock_Info
 import pandas as pd
 import numpy as np
 from pandas.io.pickle import read_pickle
 from yahoo_fin.stock_info import *
 import warnings
 warnings.filterwarnings('ignore')
-# from mpl_finance import candlestick_ohlc
 import matplotlib.pyplot as plt
 import seaborn as sns
 plt.style.use('seaborn')
@@ -32,7 +30,6 @@ class MovingAverage1(object):
 
     def getData(self):
         self.loaded_lst = read_pickle(self.path)
-        print(self.loaded_lst)
         return self.loaded_lst
 
     def mAvg(self):
@@ -64,7 +61,7 @@ class MovingAverage1(object):
 
     def plot_mAvg(self, ticker, path):
         self.ticker = ticker
-        self.path = path
+        self.path = path + self.ticker + '_data_1y_1d.pkl'
         self.mAvg()
         fig, ax1 = plt.subplots()
         self.df[self.ticker].plot(ax=ax1, lw=2, color = 'k')
@@ -78,24 +75,25 @@ class MovingAverage1(object):
         ax1.set_ylabel(ylabel='Price in $')
         ax1.set_title(self.ticker+' - Moving Average Trade Signals (2-20)')
         ax1.legend(self.signals[[self.ticker, 'short_mavg','long_mavg','UpperBand','LowerBand']])
+        print('Time To Buy:\n  ', self.signals.short_mavg[self.signals.positions == 1.0], '\n\nTime To Sell: \n', self.signals.short_mavg[self.signals.positions == -1.0],'\n')
         plt.tight_layout()
         plt.show()
-        print('Time To Buy:\n  ', self.signals.short_mavg[self.signals.positions == 1.0], '\n\nTime To Sell: \n', self.signals.short_mavg[self.signals.positions == -1.0],'\n')
+        # print('Time To Buy:\n  ', self.signals.short_mavg[self.signals.positions == 1.0], '\n\nTime To Sell: \n', self.signals.short_mavg[self.signals.positions == -1.0],'\n')
 
     def gainers(self):
-        print(get_day_gainers().Symbol[:5])
+        print(f'TODAY STOCK GAINERS: \n{get_day_gainers().Symbol[:5]}\n')
         # for g in get_day_losers().Symbol[:5]:
         #     self.signal = self.plot_mAvg(ticker = g)
 
     def losers(self):
-        print(get_day_losers().Symbol[:5])
+        print(f'TODAY STOCK LOSERS: \n{get_day_losers().Symbol[:5]}\n')
         # for l in get_day_losers().Symbol[:5]:
         #     self.signal = self.plot_mAvg(ticker = l)
 
 if __name__ == "__main__":
     mavg = MovingAverage1()
-    ticker = '^GSPC'
-    path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/^GSPC_data_10y_1d.pkl'
-    mavg.plot_mAvg(ticker, path)
-    mavg.gainers()
-    mavg.losers()
+    # ticker = '^GSPC'
+    # path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/^GSPC_data_10y_1d.pkl'
+    # mavg.plot_mAvg(ticker, path)
+    # mavg.gainers()
+    # mavg.losers()

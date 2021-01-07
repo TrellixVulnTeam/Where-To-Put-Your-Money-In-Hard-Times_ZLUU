@@ -1,4 +1,3 @@
-# from src.data.make_dataset import Get_Historical_Data
 import numpy as np
 import pandas as pd
 from pandas.io.pickle import read_pickle
@@ -19,16 +18,16 @@ plt.rcParams['figure.figsize'] = [8, 4.5]
 plt.rcParams['figure.dpi'] = 300
 
 class LSTM_RNN(object):
-    def __init__(self, ticker, path, period='5y', interval='1d'):
+    def __init__(self, ticker, path, period='10y', interval='1d'):
         self.ticker = ticker
-        self.path = path
+        self.path = path + self.ticker + '_data_10y_1d.pkl'
         self.period = period
         self.interval = interval
 
     def getData(self):
-        self.data = read_pickle(path)
-        self.train = self.data.iloc[:int(len(self.data)*.7)]
-        self.test = self.data.iloc[int(len(self.data)*.3):]            
+        self.data = read_pickle(self.path)
+        self.train = self.data.iloc[:int(len(self.data)*.8)]
+        self.test = self.data.iloc[int(len(self.data)*.2):]            
 
     def configure(self): # train, test, feature-scaling
         self.getData()
@@ -90,13 +89,12 @@ class LSTM_RNN(object):
         plt.plot(self.real_stock_price, color = 'red', label = f'Real {self.ticker} Stock Price')
         plt.plot(self.predicted_stock_price, color = 'blue', label = f'Predicted {self.ticker} Stock Price')
         plt.title(f'{self.ticker} Stock Price Prediction:')
-        # plt.xlabel(f'{self.data.index} Time')
         plt.ylabel(f'{self.ticker} Stock Price')
         plt.legend()
         plt.show()
 
 if __name__ == "__main__":
     ticker = '^GSPC'
-    path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/^GSPC_data_10y_1d.pkl'
-    lstm_rnn = LSTM_RNN(ticker, path)
-    lstm_rnn.viz(epochs = 10, batch_size = 32, loss = 'mean_squared_error')
+    # path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/^GSPC_data_10y_1d.pkl'
+    # lstm_rnn = LSTM_RNN(ticker, path)
+    # lstm_rnn.viz(epochs = 10, batch_size = 32, loss = 'mean_squared_error')

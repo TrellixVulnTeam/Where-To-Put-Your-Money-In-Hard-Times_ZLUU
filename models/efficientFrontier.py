@@ -11,7 +11,6 @@ plt.rcParams['figure.dpi'] = 300
 import warnings
 warnings.filterwarnings('ignore')
 
-
 class Efficient_Frontier(object):
     def __init__(self, N_PORTFOLIOS, N_DAYS, RISKY_ASSETS, START_DATE, END_DATE, n_assets):
         self.N_PORTFOLIOS = N_PORTFOLIOS
@@ -137,5 +136,5 @@ if __name__ == "__main__":
     END_DATE = '2020-12-24'
     n_assets = len(RISKY_ASSETS)
 
-    ef = Efficient_Frontier(N_PORTFOLIOS, N_DAYS, RISKY_ASSETS, START_DATE, END_DATE, n_assets)
-    ef.final_plot()
+    # ef = Efficient_Frontier(N_PORTFOLIOS, N_DAYS, RISKY_ASSETS, START_DATE, END_DATE, n_assets)
+    # ef.final_plot()
