@@ -73,7 +73,7 @@ if __name__ == '__main__':
 if __name__=='__main__':
     pass ### ### ### ~ STRATEGIES ~ ### ### ###
     # Strategy1(sp500index, PATH).model()
-    # Strategy3(sp500index, 'SP500', PATH).model3()
+    Strategy3(sp500index, 'SP500', PATH).model3()
 
 if __name__ == '__main__':
     pass# * * * * * * * ## * * * * * * * # #~ PORTFOLIO OPTIMIZERS: ~ # * * * * * * * ## * * * * * * * #
