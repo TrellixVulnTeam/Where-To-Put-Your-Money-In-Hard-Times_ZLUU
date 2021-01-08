@@ -27,9 +27,12 @@ class SckitLearn_Stock_Analysis(object):
 
     def model_out(self):
         start = datetime.datetime(2010, 1, 1)
-        end = datetime.datetime(2021, 1, 1)
+        end = datetime.datetime(2018, 1, 1)
         df = yf.download(self.ticker, start=start, end=end, parse_dates=True)
 
+        sp = yf.download('^GSPC',start='2010-01-01', end='2019-03-01')['Adj Close']
+        sp.columns = ['sp_actual']
+        
         close_px = df['Adj Close']
         mavg = close_px.rolling(window=100).mean()
         close_px.plot(label='^GSPC')
@@ -39,31 +42,30 @@ class SckitLearn_Stock_Analysis(object):
         plt.show()
 
         rets = close_px / close_px.shift(1) - 1
-        rets.plot(label='return')
-        plt.title(f'Returns of {self.ticker} vs Time')
-        plt.show()
-
+        # rets.plot(label='return')
+        # plt.title(f'Returns of {self.ticker} vs Time')
+        # plt.show()
         dfcomp = yf.download(
             ['^GSPC', 'AAPL', 'DIS', 'MSFT'], start=start, end=end)['Adj Close']
         retscomp = dfcomp.pct_change()
-        corr = retscomp.corr()
-        plt.scatter(
-            retscomp.AAPL, retscomp['^GSPC'])
-        plt.title(f'ScatterPlot Featuring Returns of {self.ticker} vs AAPL')
-        plt.xlabel('Returns AAPL')
-        plt.ylabel('Returns SP500')
-        plt.show()
+        corr = retscomp.corr() 
+        # plt.scatter(
+        #     retscomp.AAPL, retscomp['^GSPC'])
+        # plt.title(f'ScatterPlot Featuring Returns of {self.ticker} vs AAPL')
+        # plt.xlabel('Returns AAPL')
+        # plt.ylabel('Returns SP500')
+        # plt.show()
 
-        scatter_matrix(retscomp, diagonal='kde', figsize=(10, 10))
-        plt.title(f'ScatterPlot Matrix vs {self.ticker}')
-        plt.show()
+        # scatter_matrix(retscomp, diagonal='kde', figsize=(10, 10))
+        # plt.title(f'ScatterPlot Matrix vs {self.ticker}')
+        # plt.show()
 
-        plt.imshow(corr, cmap='hot', interpolation='none')
-        plt.colorbar()
-        plt.xticks(range(len(corr)), corr.columns)
-        plt.yticks(range(len(corr)), corr.columns)
-        plt.title(f'HeatMap - Correlation of Returns To: {self.ticker}')
-        plt.show()
+        # plt.imshow(corr, cmap='hot', interpolation='none')
+        # plt.colorbar()
+        # plt.xticks(range(len(corr)), corr.columns)
+        # plt.yticks(range(len(corr)), corr.columns)
+        # plt.title(f'HeatMap - Correlation of Returns To: {self.ticker}')
+        # plt.show()
 
         plt.scatter(retscomp.mean(), retscomp.std())
         plt.xlabel('Expected returns')
@@ -131,16 +133,19 @@ class SckitLearn_Stock_Analysis(object):
         dfreg['Forecast']
         last_date = dfreg.iloc[-1].name
         last_unix = last_date
-        days = 6
+        days = 1
         next_unix = last_unix + datetime.timedelta(days)
         for i in forecast_set:
             next_date = next_unix
-            next_unix += datetime.timedelta(days=1)
+            next_unix += datetime.timedelta(days=8)
             dfreg.loc[next_date] = [np.nan for _ in range(len(dfreg.columns)-1)]+[i]
-        dfreg['Adj Close'].tail(500).plot()
-        dfreg['Forecast'].tail(500).plot()
+        
+        fig = plt.subplots(figsize=(15,6), dpi=150)
+        plt.plot(dfreg['Adj Close'].tail(500), lw=2, ls='-', color='b')
+        plt.plot(dfreg['Forecast'].tail(500), lw=2, ls='-', color='g')
+        plt.plot(sp,label='sp500-actual', color='r', ls='--', lw=1)
         plt.legend(loc=4)
-        plt.title(f'{days} MONTH FORECAST OUT OF SP500 INDEX')
+        plt.title('6 MONTH FORECAST OUT OF SP500 INDEX')
         plt.xlabel('Date')
         plt.ylabel('Price')
         plt.show()

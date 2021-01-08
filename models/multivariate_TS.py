@@ -31,7 +31,7 @@ class Multivariate_TS(object):
         self.tics = tics
 
     def multivariate(self):
-        df = web.DataReader(self.tics, 'fred', '1980', '2021').dropna()
+        df = web.DataReader(self.tics, 'fred', '1980', '2018').dropna()
         df.columns = ['sentiment', 'ip']
         print(df.info)
         df_transformed = (pd.DataFrame(
@@ -140,5 +140,4 @@ class Multivariate_TS(object):
         plt.show()
 
 if __name__ == '__main__':
-    run = Multivariate_TS()
-    run.multivariate()
+    Multivariate_TS().multivariate()

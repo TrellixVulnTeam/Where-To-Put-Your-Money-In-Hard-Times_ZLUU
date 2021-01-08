@@ -1,8 +1,9 @@
+import yfinance as yf
 import numpy as np
 import pandas as pd
 from pandas.io.pickle import read_pickle
 from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
+from keras.models import Sequential 
 from keras.layers import Dense
 from keras.layers import LSTM
 from keras.layers import Dropout
@@ -11,21 +12,13 @@ warnings.filterwarnings('ignore')
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pickle
-plt.style.use('seaborn')
-sns.set_palette('cubehelix')
-# plt.style.use('seaborn-colorblind') #alternative
-plt.rcParams['figure.figsize'] = [8, 4.5]
-plt.rcParams['figure.dpi'] = 300
 
 class LSTM_RNN(object):
-    def __init__(self, ticker, path, period='10y', interval='1d'):
+    def __init__(self, ticker):
         self.ticker = ticker
-        self.path = path + self.ticker + '_data_10y_1d.pkl'
-        self.period = period
-        self.interval = interval
 
     def getData(self):
-        self.data = read_pickle(self.path)
+        self.data = yf.download(self.ticker, start='2010-01-01', end='2018-01-01')
         self.train = self.data.iloc[:int(len(self.data)*.8)]
         self.test = self.data.iloc[int(len(self.data)*.2):]            
 
@@ -66,6 +59,10 @@ class LSTM_RNN(object):
         self.regressor.compile(optimizer = 'adam', loss=self.loss)
             # Fitting the RNN to the Training set
         self.regressor.fit(self.X_train, self.y_train, epochs=self.epochs, batch_size=self.batch_size)
+        loss = self.regressor.evaluate(self.X_train, self.y_train, verbose=0)
+        L = loss * 100
+        LOSS = "%{:,.4f}".format(L)
+        print('\n Loss = ', LOSS, '\n')
 
     def predict_rnn(self):
         self.build_rnn()
@@ -81,20 +78,21 @@ class LSTM_RNN(object):
         self.X_test = np.array(self.X_test)
         self.X_test = np.reshape(self.X_test, (self.X_test.shape[0], self.X_test.shape[1], 1))
         self.predicted_stock_price = self.regressor.predict(self.X_test)
-        self.predicted_stock_price = self.sc.inverse_transform(self.predicted_stock_price)
+        self.predicted_stock_price = self.sc.inverse_transform(self.predicted_stock_price)	
 
     def viz(self, epochs, batch_size, loss = 'mean_squared_error'):    # Visualising the results
+        sp = yf.download('^GSPC', start='2010-01-01', end='2019-01-01')['Adj Close']
+        sp.columns = ['sp500']
         self.epochs, self.batch_size, self.loss = epochs, batch_size, loss
         self.predict_rnn()
         plt.plot(self.real_stock_price, color = 'red', label = f'Real {self.ticker} Stock Price')
         plt.plot(self.predicted_stock_price, color = 'blue', label = f'Predicted {self.ticker} Stock Price')
+        plt.plot(sp, lw=1,label='sp500-actual', color='g', ls='--')
         plt.title(f'{self.ticker} Stock Price Prediction:')
         plt.ylabel(f'{self.ticker} Stock Price')
         plt.legend()
         plt.show()
 
 if __name__ == "__main__":
-    ticker = '^GSPC'
-    # path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/^GSPC_data_10y_1d.pkl'
-    # lstm_rnn = LSTM_RNN(ticker, path)
-    # lstm_rnn.viz(epochs = 10, batch_size = 32, loss = 'mean_squared_error')
+    # path = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/raw/'
+    LSTM_RNN('^GSPC').viz(epochs = 5, batch_size = 50, loss = 'mean_squared_error')

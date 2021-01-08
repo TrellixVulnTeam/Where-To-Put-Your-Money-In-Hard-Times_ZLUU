@@ -15,22 +15,22 @@ class Arima_Model(object):
         self.ticker = ticker
 
     def model_arima(self):
-        df = yf.download(self.ticker, period='2y', interval='1d')
+        df = yf.download(self.ticker, start='2010-01-01', end='2018-01-01')
         df.reset_index(inplace=True)
 
-        plt.figure(figsize=(20,7))
-        plt.title(f'{self.ticker} Index - Autocorrelation plot with lag = 3')
-        lag_plot(df['Open'], lag=3)
-        plt.xlabel("time")
-        plt.ylabel("price")        
-        plt.show()
+        # plt.figure(figsize=(20,7))
+        # plt.title(f'{self.ticker} Index - Autocorrelation plot with lag = 3')
+        # lag_plot(df['Open'], lag=3)
+        # plt.xlabel("time")
+        # plt.ylabel("price")        
+        # plt.show()
 
-        plt.figure(figsize=(20,7))
-        plt.plot(df["Date"], df["Close"])
-        plt.title(f"{self.ticker} Index Price vs Time")
-        plt.xlabel("time")
-        plt.ylabel("price")
-        plt.show()
+        # plt.figure(figsize=(20,7))
+        # plt.plot(df["Date"], df["Close"])
+        # plt.title(f"{self.ticker} Index Price vs Time")
+        # plt.xlabel("time")
+        # plt.ylabel("price")
+        # plt.show()
 
         train_data, test_data = df[0:int(len(df)*0.7)], df[int(len(df)*0.7):]
         training_data = train_data['Close'].values
@@ -53,7 +53,10 @@ class Arima_Model(object):
 
         df.set_index('Date', inplace=True)
         test_set_range = df[int(len(df)*0.7):].index
+        sp = yf.download('^GSPC', start='2010-01-01', end='2020-01-01')['Adj Close']
+        sp.columns = ['sp500']        
         plt.figure(figsize=(20,7))
+        plt.plot(sp, lw=1,label='sp500-actual', color='g', ls='--')
         plt.plot(test_set_range, model_predictions, color='blue', marker='o', linestyle='dashed',label='Predicted Price')
         plt.plot(test_set_range, test_data, color='red', label='Actual Price')
         plt.title(f'{self.ticker} Prices Prediction')

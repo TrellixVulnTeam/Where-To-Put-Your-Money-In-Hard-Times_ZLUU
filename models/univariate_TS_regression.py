@@ -11,7 +11,7 @@ from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM
+from tensorflow.keras.layers import Dense, LSTM 
 from tensorflow import keras
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -32,7 +32,8 @@ class Univariate_TS_Reg:
         self.ticker = ticker
 
     def runs(self):
-        sp500 = yf.download(self.ticker, period='10y', interval='1mo')['Adj Close']
+        # sp500 = yf.download(self.ticker, period='10y', interval='1mo')['Adj Close']
+        sp500 = yf.download(self.ticker, start='2010-01-01', end='2018-01-01')['Adj Close']
         sp500 = pd.DataFrame(sp500)
         sp500.columns = ['SP500']
         ax = sp500.plot(title='S&P 500', legend=False, figsize=(14, 4), rot=0)
@@ -96,8 +97,8 @@ class Univariate_TS_Reg:
         lstm_training = rnn.fit(
             X_train,
             y_train,
-            epochs=150,
-            batch_size=20,
+            epochs=50,
+            batch_size=13,
             shuffle=True,
             validation_data=(X_test, y_test),
             callbacks=[early_stopping, checkpointer],
@@ -115,8 +116,8 @@ class Univariate_TS_Reg:
         ax.axvline(best_epoch, ls='--', lw=1, c='k')
         sns.despine()
         fig.tight_layout()
-        # fig.savefig(results_path / 'rnn_sp500_error', dpi=300)
         plt.show()
+
 
         train_rmse_scaled = np.sqrt(rnn.evaluate(X_train, y_train, verbose=0))
         test_rmse_scaled = np.sqrt(rnn.evaluate(X_test, y_test, verbose=0))
@@ -173,6 +174,5 @@ class Univariate_TS_Reg:
         # fig.savefig(results_path / 'rnn_sp500_regression', dpi=300);
 
 if __name__ == '__main__':
-    ticker = '^GSPC'
-    # run = Univariate_TS_Reg(ticker)
-    # run.runs()
+    pass
+    # Univariate_TS_Reg('^GSPC').runs()

@@ -32,16 +32,16 @@ class Model:
         self.stock = stock
 
     def dataHull(self):
-        # self.df_components = yf.download(
-        #     self.stock, 
-        #     start='2019-01-03', 
-        #     end='2019-12-30', 
-        #     interval='1d',
-        #     parse_dates=True, 
-        #     index_col=0
-        #     )['Adj Close']
-        # self.df_components.to_pickle(p + 'raw/sp500component_hist_2019.pkl')
-        self.dfc = pd.read_pickle(p + 'raw/sp500component_hist_2019.pkl')
+        self.df_components = yf.download(
+            self.stock, 
+            start='2018-01-03', 
+            end='2018-12-30', 
+            interval='1d',
+            parse_dates=True, 
+            index_col=0
+            )['Adj Close']
+        self.df_components.to_pickle(p + 'raw/sp500component_hist_2018.pkl')
+        self.dfc = pd.read_pickle(p + 'raw/sp500component_hist_2018.pkl')
         self.dfc = self.dfc[:-1]
         self.dfc.index = pd.to_datetime(self.dfc.index)
 
@@ -49,7 +49,7 @@ class Model:
         self.daily_df_components = self.filled_df_components.resample('24h').ffill()
         self.daily_df_components = self.daily_df_components.fillna(method='bfill')
 
-        self.spData = pd.read_pickle(p + 'raw/^GSPC_data_10y_1d.pkl')
+        self.spData = yf.download('^GSPC', start='2010-01-01', end='2018-01-01')
         self.dataSP = pd.DataFrame(self.spData['Close'])
         self.dataSP.columns = ['SP500']
         self.dataSP.index = pd.to_datetime(self.dataSP.index)
@@ -108,7 +108,7 @@ class Model:
         for key, value in self.critical_values.items():
             print('Critical value (%s): %.3f' % (key, value))
         self.df_log = np.log(self.df_settle)
-        self.df_log_ma= self.df_log.rolling(2).mean()
+        self.df_log_ma= -self.df_log.rolling(2).mean()
         self.df_detrend = self.df_log - self.df_log_ma
         self.df_detrend.dropna(inplace=True)
             # Mean and standard deviation of detrended data
@@ -212,6 +212,8 @@ class Model:
         return self.model_results
 
     def predict(self):
+        sp = yf.download('^GSPC', startr='2010-01-01', end='2020-01-01', interval='1mo')['Adj Close']
+        sp.columns = ['sp500']
         self.fitModel_to_SARIMAX()
         self.n = len(self.df_settle.index)
         self.prediction = self.model_results.get_prediction(
@@ -228,6 +230,7 @@ class Model:
         self.upper_ci = self.prediction_ci.iloc[:, 1]
         ax.fill_between(self.ci_index, self.lower_ci, self.upper_ci,
             color='r', alpha=.1)
+        sp.plot(lw=1,label='sp500-actual', color='b', ls='--')
         ax.set_xlabel('Time (years)')
         ax.set_ylabel('Prices')
         plt.legend()
@@ -235,6 +238,6 @@ class Model:
 
 if __name__ == '__main__':
     pass
-    # stock=read_pickle(p + 'tickers/sp500_ticker_list.pkl')
-    # x = Model(stock)
-    # x.predict()
+    PATH = '/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/'
+    stock=read_pickle(PATH + 'interim/tickers/sp500_ticker_list.pkl')
+    Model(stock).predict()
