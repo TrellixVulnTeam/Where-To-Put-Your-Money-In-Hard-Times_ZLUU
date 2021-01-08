@@ -68,12 +68,12 @@ if __name__ == '__main__':
     # x.setup(name, period)
     # x.level()
 
-    x = MovingAverage3()
-    stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 2, 20, 'SMA', '1y')
-    stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 20, 50, 'SMA', '1y')
-    stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 2, 20, 'EMA', '1y')
-    stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 20, 50, 'EMA', '1y')
-    plt.show()
+    # x = MovingAverage3()
+    # stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 2, 20, 'SMA', '1y')
+    # stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'SMA', '1y')
+    # stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 2, 20, 'EMA', '1y')
+    # stock_df, table = x.MovingAverageCrossStrategy('^GSPC', 20, 50, 'EMA', '1y')
+    # plt.show()
     
 # EFFICIENT-FRONTIER:
     # N_PORTFOLIOS = 10 ** 5
@@ -88,22 +88,22 @@ if __name__ == '__main__':
 
 # PORTFOLIO OPTIMIZERS:
     # saveName = 'sample_data' 'sp500' 'dow' 'nasdaq' 'sample' 'broker_pos_data' 'roth_pos_data', 'moveOn_pos_data', 'potential_pos_data'
-    # saveName = 'potential_pos_data'
-    # p = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/"
-    # path = p + 'raw/' + saveName + '_10y_1d.pkl'
-    # PT_data = pd.read_pickle(path)
-    # PT = pd.DataFrame(PT_data)
-    # tickers, returns = list(PT.columns), PT.pct_change()
-    # mean_returns, cov_matrix, num_portfolios, risk_free_rate = returns.mean(), returns.cov(), 25000, 0.0178
-    # destination = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/processed/" 
+    saveName = 'dow'
+    p = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/"
+    path = p + 'raw/' + saveName + '_10y_1d.pkl'
+    PT_data = pd.read_pickle(path)
+    PT = pd.DataFrame(PT_data)
+    tickers, returns = list(PT.columns), PT.pct_change()
+    mean_returns, cov_matrix, num_portfolios, risk_free_rate = returns.mean(), returns.cov(), 25000, 0.0178
+    destination = "/home/gordon/work/Where-To-Put-Your-Money-In-Hard-Times/data/processed/" 
 
-    # rp, sdp, rp_min, sdp_min = optimizer.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
-    # x = Look_At_Optimized_Portfolios(saveName) #####
-    # df, fd, a, b = x.viz()
-    # print(f'\nMaximum Sharpe Ratio Portfolio: \n   Annualized Return = {round(rp,2)}%\n   Annualized Volatility = {round(sdp,2)}%\n\n {df.iloc[a]}')
-    # print(f'\n\nMinimum Volatility Portfolio \n   Annualized Return = {round(rp_min,2)}%\n   Annualized Volatility = {round(sdp_min,2)}%\n\n {fd.iloc[b]}')
+    rp, sdp, rp_min, sdp_min = optimizer.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
+    x = Look_At_Optimized_Portfolios(saveName) #####
+    df, fd, a, b = x.viz()
+    print(f'\nMaximum Sharpe Ratio Portfolio: \n   Annualized Return = {round(rp,2)}%\n   Annualized Volatility = {round(sdp,2)}%\n\n {df.iloc[a]}')
+    print(f'\n\nMinimum Volatility Portfolio \n   Annualized Return = {round(rp_min,2)}%\n   Annualized Volatility = {round(sdp_min,2)}%\n\n {fd.iloc[b]}')
  
-    # optimizer2.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
+    optimizer2.display_ef_with_selected(PT, mean_returns, cov_matrix, risk_free_rate, destination, saveName, returns, num_portfolios) #####
 
 # STRATEGIES:
     # tic = ['^GSPC', 'SPY']

@@ -3,9 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import yfinance as yf
 from fbprophet import Prophet
-m = Prophet(daily_seasonality = True)
+# m = Prophet(daily_seasonality = True)
 
-class Prophet(object):
+class Prophets(object):
     def __init__(self, ticker):
         self.ticker = ticker
 
@@ -20,7 +20,7 @@ class Prophet(object):
         data = data.rename(columns = {"Date":"ds","Close":"y"}) #renaming the columns of the dataset
         data.head(5)
     # the Prophet class (model) - # fit the model using all data
-        
+        m = Prophet(daily_seasonality = True)
         m.fit(data) 
     # specify the number of days in future
         future = m.make_future_dataframe(periods=365) 
@@ -37,5 +37,5 @@ class Prophet(object):
 
 if __name__ == '__main__':
     ticker = '^GSPC'
-    run = Prophet(ticker)
+    run = Prophets(ticker)
     run.model_prophet()

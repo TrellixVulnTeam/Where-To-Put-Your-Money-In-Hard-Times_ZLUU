@@ -64,6 +64,6 @@ class MovingAverage3(object):
 
 if __name__ == '__main__':
     x = MovingAverage3()
-    # stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'SMA', '1y')
+    stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'SMA', '1y')
     # stock_df, table = x.MovingAverageCrossStrategy('AAPL', 20, 50, 'EMA', '1y')
-    # plt.show()
+    plt.show()

@@ -128,5 +128,5 @@ class Strategy1:
 
 if __name__ == '__main__':
     tic = ['^GSPC', 'SPY']
-    # run = Strategy1(tic)
-    # run.model()    
+    run = Strategy1(tic)
+    run.model()    

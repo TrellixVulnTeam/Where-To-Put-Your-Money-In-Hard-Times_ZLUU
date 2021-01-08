@@ -147,5 +147,5 @@ class Strategy3:
 
 if __name__ =='__main__':
     symbol, tic = 'SP500', '^GSPC'
-    # run = Strategy3(symbol, tic)
-    # run.model3()
+    run = Strategy3(symbol, tic)
+    run.model3()
