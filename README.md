@@ -26,7 +26,7 @@
 
 ![sp500_1y_1d_optimized_plot](images/sp500_1y_1d_optimized_plot.png)
 
-![sp500_1y_1d_optimal_portfolio](images/sp500_1y_1d_optimal_portfolio.png)
+![sp500_optimal_portfolio](images/sp500_1y_1d_optimal_portfolio.png)
 
 
 ![CONCLUSION](images/CONCLUSION.png)
