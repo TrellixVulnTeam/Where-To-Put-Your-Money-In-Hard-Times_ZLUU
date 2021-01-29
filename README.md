@@ -16,6 +16,18 @@
 
 ![BEAT_MARKET](images/BEAT_MARKET.png)
 
+# ADDITIONAL ML MODELS:
+## FORECASTS:
+![PROPHET](images/PROPHET.png)
+
+
+## PRINCIPAL COMPONENT ANALYSIS OF INDIVIDUAL COMPONENT STOCKS WITHIN THE S&P 500 INDEX TO FIND OPTIMAL SECURITIES TO COMPRISE A PORTFOLIO
+![sp500_1y_1d_optimized](images/sp500_1y_1d_optimized.png)
+
+![sp500_1y_1d_optimized_plot](images/sp500_1y_1d_optimized_plot.png)
+
+![sp500_1y_1d_optimal_portfolio](images/sp500_1y_1d_optimal_portfolio.png)
+
 
 ![CONCLUSION](images/CONCLUSION.png)
 
