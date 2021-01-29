@@ -1,6 +1,8 @@
 where to put your money
 ==============================
 
+![cover](images/COVER.png)
+
 a look at the options for where to put your money in hard financial times - vizualiation - analysis - forecast
 
 Project Organization
