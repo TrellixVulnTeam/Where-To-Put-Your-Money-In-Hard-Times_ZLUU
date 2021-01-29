@@ -1,9 +1,36 @@
-where to put your money
-==============================
-
 ![cover](images/COVER.png)
+* a look at the options for where to put your money in hard financial times - vizualiation - analysis - forecast
 
-a look at the options for where to put your money in hard financial times - vizualiation - analysis - forecast
+
+![INTRO](images/INTRO.png)
+
+
+![MONEY_OPTIONS](images/MONEY_OPTIONS.png)
+
+
+![SARIMA1](images/SARIMA1.png)
+
+
+![SARIMA2](images/SARIMA2.png)
+
+
+![BEAT_MARKET](images/BEAT_MARKET.png)
+
+
+![CONCLUSION](images/CONCLUSION.png)
+
+
+![FURTHER](images/FURTHER.png)
+
+
+![QUESTIONS](images/QUESTIONS.png)
+
+
+![RESOURCES](images/RESOURCES.png)
+
+
+![DISCLAIMER](images/DISCLAIMER.png)
+
 
 Project Organization
 ------------
